@@ -202,7 +202,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
   },
   {
     path: '/login',
-    component: () => import('@/views/Login/Login.vue'),
+    component: () => import('@/views/Login/CgLogin.vue'),
     name: 'Login',
     meta: {
       hidden: true,
