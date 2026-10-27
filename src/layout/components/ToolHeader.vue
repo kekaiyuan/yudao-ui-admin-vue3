@@ -112,21 +112,21 @@ export default defineComponent({
           {size.value ? (
             <SizeDropdown class="custom-hover" color="var(--top-header-text-color)"></SizeDropdown>
           ) : undefined}
-          {locale.value ? (
+          {/* {locale.value ? (
             <LocaleDropdown
               class="custom-hover"
               color="var(--top-header-text-color)"
             ></LocaleDropdown>
-          ) : undefined}
-          {message.value ? (
+          ) : undefined} */}
+          {/* {message.value ? (
             <Message class="custom-hover" color="var(--top-header-text-color)"></Message>
-          ) : undefined}
+          ) : undefined} */}
           {/* IM 聊天入口 */}
-          {im.value ? (
+          {/* {im.value ? (
             <div class="custom-hover" onClick={goToChat}>
               <Icon color="var(--top-header-text-color)" size={18} icon="ep:chat-dot-round" />
             </div>
-          ) : undefined}
+          ) : undefined} */}
           <UserInfo></UserInfo>
         </div>
       </div>

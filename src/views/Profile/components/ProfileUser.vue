@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="text-center">
+    <!-- <div class="text-center">
       <UserAvatar :img="userInfo?.avatar" />
-    </div>
+    </div> -->
     <ul class="list-group list-group-striped">
       <li class="list-group-item">
         <Icon class="mr-5px" icon="ep:user" />
