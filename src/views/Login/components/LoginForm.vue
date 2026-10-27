@@ -1,14 +1,6 @@
 <template>
-  <el-form
-    v-show="getShow"
-    ref="formLogin"
-    :model="loginData.loginForm"
-    :rules="LoginRules"
-    class="login-form"
-    label-position="top"
-    label-width="120px"
-    size="large"
-  >
+  <el-form v-show="getShow" ref="formLogin" :model="loginData.loginForm" :rules="LoginRules" class="login-form"
+    label-position="top" label-width="120px" size="large">
     <el-row class="mx-[-10px]">
       <el-col :span="24" class="px-10px">
         <el-form-item>
@@ -17,34 +9,22 @@
       </el-col>
       <el-col :span="24" class="px-10px">
         <el-form-item v-if="loginData.tenantEnable === 'true'" prop="tenantName">
-          <el-input
-            v-model="loginData.loginForm.tenantName"
-            :placeholder="t('login.tenantNamePlaceholder')"
-            :prefix-icon="iconHouse"
-            link
-            type="primary"
-          />
+          <el-select v-model="loginData.loginForm.tenantName" :placeholder="t('login.tenantNamePlaceholder')"
+            class="w-full" filterable :loading="tenantListLoading">
+            <el-option v-for="item in tenantList" :key="item.id" :label="item.name" :value="item.name" />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
         <el-form-item prop="username">
-          <el-input
-            v-model="loginData.loginForm.username"
-            :placeholder="t('login.usernamePlaceholder')"
-            :prefix-icon="iconAvatar"
-          />
+          <el-input v-model="loginData.loginForm.username" :placeholder="t('login.usernamePlaceholder')"
+            :prefix-icon="iconAvatar" />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
         <el-form-item prop="password">
-          <el-input
-            v-model="loginData.loginForm.password"
-            :placeholder="t('login.passwordPlaceholder')"
-            :prefix-icon="iconLock"
-            show-password
-            type="password"
-            @keyup.enter="getCode()"
-          />
+          <el-input v-model="loginData.loginForm.password" :placeholder="t('login.passwordPlaceholder')"
+            :prefix-icon="iconLock" show-password type="password" @keyup.enter="getCode()" />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px mt-[-20px] mb-[-20px]">
@@ -74,14 +54,8 @@
           </el-button>
         </el-form-item>
       </el-col>
-      <Verify
-        v-if="loginData.captchaEnable === 'true'"
-        ref="verify"
-        :captchaType="captchaType"
-        :imgSize="{ width: '400px', height: '200px' }"
-        mode="pop"
-        @success="handleLogin"
-      />
+      <Verify v-if="loginData.captchaEnable === 'true'" ref="verify" :captchaType="captchaType"
+        :imgSize="{ width: '400px', height: '200px' }" mode="pop" @success="handleLogin" />
       <!-- <el-col :span="24" class="px-10px">
         <el-form-item>
           <el-row :gutter="5" justify="space-between" style="width: 100%">
@@ -148,15 +122,17 @@ import * as authUtil from '@/utils/auth'
 import { buildSocialRedirectUri } from '@/utils/social'
 import { usePermissionStore } from '@/store/modules/permission'
 import * as LoginApi from '@/api/login'
+import { getTenantList } from '@/api/system/tenant'
 import { LoginStateEnum, useFormValid, useLoginState } from './useLogin'
 
 defineOptions({ name: 'LoginForm' })
 
 const { t } = useI18n()
 const message = useMessage()
-const iconHouse = useIcon({ icon: 'ep:house' })
 const iconAvatar = useIcon({ icon: 'ep:avatar' })
 const iconLock = useIcon({ icon: 'ep:lock' })
+const tenantList = ref<{ id: number; name: string }[]>([])
+const tenantListLoading = ref(false)
 const formLogin = ref()
 const { validForm } = useFormValid(formLogin)
 const { setLoginState, getLoginState } = useLoginState()
@@ -228,6 +204,20 @@ const getLoginFormCache = () => {
       rememberMe: loginForm.rememberMe,
       tenantName: loginForm.tenantName ? loginForm.tenantName : loginData.loginForm.tenantName
     }
+  }
+}
+// 获取租户下拉列表
+const getTenantOptions = async () => {
+  if (loginData.tenantEnable !== 'true') {
+    return
+  }
+  tenantListLoading.value = true
+  try {
+    tenantList.value = (await getTenantList()) || []
+  } catch {
+    tenantList.value = []
+  } finally {
+    tenantListLoading.value = false
   }
 }
 // 根据域名，获得租户信息
@@ -329,6 +319,7 @@ watch(
 )
 onMounted(() => {
   getLoginFormCache()
+  getTenantOptions()
   getTenantByWebsite()
 })
 </script>
